@@ -1,0 +1,8 @@
+{
+  "mainnet": {
+    "StakingContract": {
+      "address": "0xAE134B123A10cb031B67d3fCc50B9F98db38d6Ac",
+      "startBlock": 0
+    }
+  }
+}

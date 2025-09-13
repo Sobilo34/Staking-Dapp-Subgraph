@@ -1,0 +1,39 @@
+specVersion: 1.3.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: StakingContract
+    network: mainnet
+    source:
+      address: "0xAE134B123A10cb031B67d3fCc50B9F98db38d6Ac"
+      abi: StakingContract
+      startBlock: 919420
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - GlobalState
+        - User
+        - Stake
+        - Withdraw
+        - Claim
+        - RewardRateUpdate
+      abis:
+        - name: StakingContract
+          file: ./abis/StakingContract.json
+      eventHandlers:
+        - event: Staked(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleStaked
+        - event: Withdrawn(indexed address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleWithdrawn
+        - event: RewardsClaimed(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleRewardsClaimed
+        - event: RewardRateUpdated(uint256,uint256,uint256,uint256)
+          handler: handleRewardRateUpdated
+        - event: StakingInitialized(indexed address,uint256,uint256)
+          handler: handleStakingInitialized
+      file: ./src/staking-contract.ts

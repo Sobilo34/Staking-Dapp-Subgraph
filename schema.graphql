@@ -1,0 +1,63 @@
+type GlobalState @entity(immutable: false) {
+  id: ID!
+  totalStaked: BigInt!
+  currentRewardRate: BigInt!
+  lastUpdateTimestamp: BigInt!
+  totalUniqueStakers: BigInt!
+  cumulativeStaked: BigInt!
+  cumulativeRewardsDistributed: BigInt!
+  stakingToken: Bytes
+}
+
+type User @entity(immutable: false) {
+  id: Bytes!
+  stakedAmount: BigInt!
+  pendingRewards: BigInt!
+  lastStakeTimestamp: BigInt!
+  totalStaked: BigInt!
+  totalWithdrawn: BigInt!
+  totalRewardsClaimed: BigInt!
+  lastUpdateTimestamp: BigInt!
+  stakes: [Stake!]! @derivedFrom(field: "user")
+  withdrawals: [Withdraw!]! @derivedFrom(field: "user")
+  claims: [Claim!]! @derivedFrom(field: "user")
+}
+
+type Stake @entity(immutable: true) {
+  id: Bytes!
+  user: User!
+  amount: BigInt!
+  timestamp: BigInt!
+  totalStaked: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type Withdraw @entity(immutable: true) {
+  id: Bytes!
+  user: User!
+  amount: BigInt!
+  timestamp: BigInt!
+  totalStaked: BigInt!
+  rewardsAccrued: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type Claim @entity(immutable: true) {
+  id: Bytes!
+  user: User!
+  amount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type RewardRateUpdate @entity(immutable: true) {
+  id: Bytes!
+  oldRate: BigInt!
+  newRate: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
