@@ -33,7 +33,7 @@ function getGlobalState(): GlobalState {
     global.cumulativeStaked = BigInt.zero()
     global.cumulativeRewardsDistributed = BigInt.zero()
     global.stakingToken = null
-    global.save()
+    global.save() 
   }
   return global as GlobalState
 }
