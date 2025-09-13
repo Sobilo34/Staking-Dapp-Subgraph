@@ -22,6 +22,7 @@ dataSources:
         - Withdraw
         - Claim
         - RewardRateUpdate
+        - EmergencyWithdraw
       abis:
         - name: StakingContract
           file: ./abis/StakingContract.json
@@ -36,4 +37,6 @@ dataSources:
           handler: handleRewardRateUpdated
         - event: StakingInitialized(indexed address,uint256,uint256)
           handler: handleStakingInitialized
+        - event: EmergencyWithdrawn(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleEmergencyWithdrawn
       file: ./src/staking-contract.ts

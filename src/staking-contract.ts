@@ -3,7 +3,8 @@ import {
   RewardsClaimed as RewardsClaimedEvent,
   Staked as StakedEvent,
   StakingInitialized as StakingInitializedEvent,
-  Withdrawn as WithdrawnEvent
+  Withdrawn as WithdrawnEvent,
+  EmergencyWithdrawn as EmergencyWithdrawnEvent
 } from "../generated/StakingContract/StakingContract"
 
 import {
@@ -12,7 +13,8 @@ import {
   Stake,
   Withdraw,
   Claim,
-  RewardRateUpdate
+  RewardRateUpdate,
+  EmergencyWithdraw
 } from "../generated/schema"
 
 import { Address, BigInt } from "@graphprotocol/graph-ts"
@@ -158,6 +160,33 @@ export function handleRewardRateUpdated(event: RewardRateUpdatedEvent): void {
   let global = getGlobalState()
   global.currentRewardRate = event.params.newRate
   global.totalStaked = event.params.totalStaked
+  global.lastUpdateTimestamp = event.block.timestamp
+  global.save()
+}
+
+export function handleEmergencyWithdrawn(event: EmergencyWithdrawnEvent): void {
+  let emergencyWithdrawEvent = new EmergencyWithdraw(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  )
+  
+  let user = getUser(event.params.user)
+  emergencyWithdrawEvent.user = user.id
+  emergencyWithdrawEvent.amount = event.params.amount
+  emergencyWithdrawEvent.penalty = event.params.penalty
+  emergencyWithdrawEvent.timestamp = event.params.timestamp
+  emergencyWithdrawEvent.totalStaked = event.params.newTotalStaked
+  emergencyWithdrawEvent.blockNumber = event.block.number
+  emergencyWithdrawEvent.transactionHash = event.transaction.hash
+  emergencyWithdrawEvent.save()
+  
+  user.stakedAmount = BigInt.zero()
+  user.pendingRewards = BigInt.zero()
+  user.totalWithdrawn = user.totalWithdrawn.plus(event.params.amount)
+  user.lastUpdateTimestamp = event.block.timestamp
+  user.save()
+
+  let global = getGlobalState()
+  global.totalStaked = event.params.newTotalStaked
   global.lastUpdateTimestamp = event.block.timestamp
   global.save()
 }

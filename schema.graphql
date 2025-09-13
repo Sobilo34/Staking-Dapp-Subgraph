@@ -21,6 +21,7 @@ type User @entity(immutable: false) {
   stakes: [Stake!]! @derivedFrom(field: "user")
   withdrawals: [Withdraw!]! @derivedFrom(field: "user")
   claims: [Claim!]! @derivedFrom(field: "user")
+  emergencyWithdrawals: [EmergencyWithdraw!]! @derivedFrom(field: "user")
 }
 
 type Stake @entity(immutable: true) {
@@ -58,6 +59,17 @@ type RewardRateUpdate @entity(immutable: true) {
   oldRate: BigInt!
   newRate: BigInt!
   timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+}
+
+type EmergencyWithdraw @entity(immutable: true) {
+  id: Bytes!
+  user: User!
+  amount: BigInt!
+  penalty: BigInt!
+  timestamp: BigInt!
+  totalStaked: BigInt!
   blockNumber: BigInt!
   transactionHash: Bytes!
 }
